@@ -10,10 +10,13 @@ from Input_ValidationV1 import input_graphvalue
 import matplotlib.pyplot as plt
 
 def graph_details(symbol,period,start,end):
+    # create a ticker object
     data = yf.Ticker(symbol)
     column= input_graphvalue()
+    # get longName detail
     company_name = data.info["longName"]
     print("True")
+    # get the history data
     stock_df= data.history(period="max", start=start, end=end)
     return data,column,company_name,stock_df
 
