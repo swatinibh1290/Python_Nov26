@@ -22,8 +22,14 @@ def linger_model(x,y,time_range):
     y_hist = rm.predict(x.reshape(-1,1))
     
     # get R square
-    R_square = rm.score(x.reshape(-1,1), y)  # question about whihch parameter need to put in?
-    print('the R Square for this predictive model is ',R_square)
+    r_square = rm.score(x.reshape(-1,1), y)  
+    print('the R Square for this predictive model is ',r_square)
+    
+    # get RMSE
+    error = y_hist - y
+    rmse = (error**2).mean()** 0.5
+    print('the RMSE for this predictive model is ', rmse)
+    
     # add predict time range
     new_x = np.asarray(pd.RangeIndex(start = x[-1], stop = x[-1] + time_range))
     # create new predict price
@@ -36,10 +42,10 @@ def linger_model(x,y,time_range):
     x = pd.to_datetime(x, origin = '1970-01-01', unit='D')
     new_x = pd.to_datetime(new_x, origin = '1970-01-01', unit='D')
     
-    return y_hist,y_pred,new_x
+    return y_hist,y_pred,new_x,r_square,rmse
     
     
-def run_regression(hist,fu_period):
+def run_regression(hist,fu_period,symbol):
     # convert date to numbers, so that dates can be passed directly to regression model
     hist = hist
     print(hist)
@@ -50,8 +56,8 @@ def run_regression(hist,fu_period):
     x = np.asarray(hist.index)
     y = np.asarray(hist['Close'])
     
-    y_hist,y_pred,new_x = linger_model(x, y, fu_period)
-    pred_plot(x, y, y_hist, y_pred, new_x)
+    y_hist,y_pred,new_x,rsquare,rmse = linger_model(x, y, fu_period)
+    pred_plot(x, y, y_hist, y_pred, new_x,rsquare,rmse,symbol,fu_period)
     
     return x,y
     
